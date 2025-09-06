@@ -8,3 +8,9 @@ resource "aws_subnet" "pub_sub1" {
     cidr_block = "10.0.0.0/26"
   
 }
+
+resource "aws_subnet" "pub_sub2" {
+    vpc_id = aws_vpc.vpc.id
+    cidr_block = "10.0.0.64/26"
+  
+}
