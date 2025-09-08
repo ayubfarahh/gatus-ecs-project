@@ -6,24 +6,28 @@ resource "aws_vpc" "vpc" {
 resource "aws_subnet" "pub_sub1" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.0.0/26"
+  availability_zone = "az1"
 
 }
 
 resource "aws_subnet" "pub_sub2" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.0.64/26"
+  availability_zone = "az2"
 
 }
 
 resource "aws_subnet" "priv_sub1" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.0.128/26"
+  availability_zone = "az1"
 
 }
 
 resource "aws_subnet" "priv_sub2" {
   vpc_id     = aws_vpc.vpc.id
   cidr_block = "10.0.0.192/26"
+  availability_zone = "az2"
 
 }
 
