@@ -18,8 +18,7 @@ resource "aws_route53_record" "cert_validation" {
       type   = dvo.resource_record_type
     }
   }
-
-  zone_id = var.alb_zone_id
+  zone_id = var.zone_id
   name    = each.value.name
   type    = each.value.type
   ttl     = 60

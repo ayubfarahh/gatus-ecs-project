@@ -1,5 +1,5 @@
 output "coderco_zone_id" {
-    value = aws_route53_zone.zone
+    value = aws_route53_zone.dns.zone_id
   
 }
 
