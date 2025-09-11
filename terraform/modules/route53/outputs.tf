@@ -1,4 +1,4 @@
-output "coderco_zone_id" {
+output "zone_id" {
     value = aws_route53_zone.dns.zone_id
   
 }

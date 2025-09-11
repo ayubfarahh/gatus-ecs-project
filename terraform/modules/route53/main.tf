@@ -4,10 +4,10 @@ resource "aws_route53_zone" "dns" {
 }
 
 resource "aws_route53_record" "root" {
-    zone_id = aws_route53_zone.zone.zone_id
+    zone_id = aws_route53_zone.dns.zone_id
     name = "dev.coderco.ayubs.uk"
     type = "A"
-    ttl = 300
+   
 
     alias {
       name = var.alb_dns_name

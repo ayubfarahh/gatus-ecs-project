@@ -35,7 +35,7 @@ resource "aws_security_group" "sg_alb" {
 }
 
 resource "aws_lb_target_group" "alb_tg" {
-  name     = "alb_tg"
+  name     = "alb-tg"
   port     = 80
   protocol = "HTTP"
   target_type = "ip"

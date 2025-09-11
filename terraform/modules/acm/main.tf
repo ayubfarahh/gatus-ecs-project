@@ -7,8 +7,6 @@ resource "aws_acm_certificate" "cert" {
     }
 }
 
-variable "zone_id" { type = string }
-
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.cert.domain_validation_options :
