@@ -1,0 +1,70 @@
+resource "aws_ecs_cluster" "gatus_cluster" {
+  name = "gatus-cluster"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+}
+
+resource "aws_iam_role" "ecs_task_execution" {
+  name = "ecs-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_policy" {
+  role       = aws_iam_role.ecs_task_execution
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_ecs_task_definition" "gat" {
+  family                   = "test"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 1024
+  memory                   = 2048
+  execution_role_arn = aws_iam_role.ecs_task_execution.arn
+  container_definitions    = TASK_DEFINITION
+[
+  {
+    "name": "iis",
+    "image": "mcr.microsoft.com/windows/servercore/iis",
+    "cpu": 1024,
+    "memory": 2048,
+    "essential": true
+  }
+]
+}
+
+resource "aws_ecs_task_definition" "gatus_task" {
+    family = "gatus-task-definition"
+    requires_compatibilities = [ "FARGATE" ]
+    network_mode = "awsvpc"
+    cpu = 1024
+    memory = 2048
+    execution_role_arn = aws_iam_role.ecs_task_execution.arn
+    container_definitions = <<TASK_DEFINITION
+    [
+      {
+       "name": "gatus",
+       "image": 
+       
+      
+      
+      }
+    ]
+
+  
+}
