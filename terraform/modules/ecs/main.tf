@@ -29,24 +29,6 @@ resource "aws_iam_role_policy_attachment" "ecs_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-resource "aws_ecs_task_definition" "gat" {
-  family                   = "test"
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = 1024
-  memory                   = 2048
-  execution_role_arn = aws_iam_role.ecs_task_execution.arn
-  container_definitions    = TASK_DEFINITION
-[
-  {
-    "name": "iis",
-    "image": "mcr.microsoft.com/windows/servercore/iis",
-    "cpu": 1024,
-    "memory": 2048,
-    "essential": true
-  }
-]
-}
 
 resource "aws_ecs_task_definition" "gatus_task" {
     family = "gatus-task-definition"
@@ -59,12 +41,12 @@ resource "aws_ecs_task_definition" "gatus_task" {
     [
       {
        "name": "gatus",
-       "image": 
-       
-      
-      
+       "image": "940622738555.dkr.ecr.eu-west-2.amazonaws.com/gatus:latest",
+       "cpu": 1024,
+       "memory": 2048,
+       "essential": true
       }
     ]
-
+    TASK_DEFINITION
   
 }
