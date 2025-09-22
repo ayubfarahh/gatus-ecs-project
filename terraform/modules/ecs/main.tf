@@ -51,6 +51,26 @@ resource "aws_ecs_task_definition" "gatus_task" {
   
 }
 
+resource "aws_security_group" "ecs_sg" {
+  name = "ecs_sg"
+  vpc_id = var.vpc_id
+
+  ingress{
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    security_groups = [ var.alb_sg ]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+}
+
 resource "aws_ecs_service" "gatus_service" {
   name            = "gatus_service"
   cluster         = aws_ecs_cluster.gatus_cluster
@@ -60,10 +80,12 @@ resource "aws_ecs_service" "gatus_service" {
   load_balancer {
     target_group_arn = var.alb_tg_arn
     container_name   = "80"
-    container_port   = 8080
+    container_port   = 3000
   }
 
   network_configuration {
-    subnets = 
+    subnets = var.priv_subnets
+    security_groups = [aws.security_groups.ecs_sg]
+    assign_public_ip = true
   }
 }

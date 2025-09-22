@@ -7,6 +7,14 @@ output "pub_subnets" {
 
 }
 
+output "priv_subnets" {
+  value = [
+    aws_subnet.priv_sub1.id,
+    aws_subnet.priv_sub2.id
+  ]
+  
+}
+
 output "vpc_id" {
   value = aws_vpc.vpc.id
 
