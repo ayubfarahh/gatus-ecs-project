@@ -50,3 +50,20 @@ resource "aws_ecs_task_definition" "gatus_task" {
     TASK_DEFINITION
   
 }
+
+resource "aws_ecs_service" "gatus_service" {
+  name            = "gatus_service"
+  cluster         = aws_ecs_cluster.gatus_cluster
+  task_definition = aws_ecs_task_definition.gatus_task
+  desired_count   = 1
+
+  load_balancer {
+    target_group_arn = var.alb_tg_arn
+    container_name   = "80"
+    container_port   = 8080
+  }
+
+  network_configuration {
+    subnets = 
+  }
+}

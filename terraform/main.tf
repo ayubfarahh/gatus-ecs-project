@@ -4,6 +4,12 @@ module "vpc" {
 
 }
 
+module "ecs" {
+  source = "./modules/ecs"
+  alb_tg_arn = module.alb.target_group_arn
+  
+}
+
 module "alb" {
   source      = "./modules/alb"
   pub_subnets = module.vpc.pub_subnets
