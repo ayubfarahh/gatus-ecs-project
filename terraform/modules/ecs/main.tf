@@ -85,7 +85,7 @@ resource "aws_ecs_service" "gatus_service" {
 
   network_configuration {
     subnets = var.priv_subnets
-    security_groups = [aws.security_groups.ecs_sg]
+    security_groups = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
 }

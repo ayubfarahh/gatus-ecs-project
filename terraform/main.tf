@@ -6,7 +6,7 @@ module "vpc" {
 
 module "ecs" {
   source = "./modules/ecs"
-  alb_tg_arn = module.alb.target_group_arn
+  alb_tg_arn = module.alb.alb_tg_arn
   priv_subnets = module.vpc.priv_subnets
   vpc_id = module.vpc.vpc_id
   alb_sg = module.alb.alb_sg
