@@ -25,7 +25,7 @@ resource "aws_iam_role" "ecs_task_execution" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_policy" {
-  role       = aws_iam_role.ecs_task_execution
+  role       = aws_iam_role.ecs_task_execution.id
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
@@ -73,8 +73,8 @@ resource "aws_security_group" "ecs_sg" {
 
 resource "aws_ecs_service" "gatus_service" {
   name            = "gatus_service"
-  cluster         = aws_ecs_cluster.gatus_cluster
-  task_definition = aws_ecs_task_definition.gatus_task
+  cluster         = aws_ecs_cluster.gatus_cluster.id
+  task_definition = aws_ecs_task_definition.gatus_task.id
   desired_count   = 1
 
   load_balancer {
