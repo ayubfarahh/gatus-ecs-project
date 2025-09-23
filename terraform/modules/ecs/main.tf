@@ -25,7 +25,7 @@ resource "aws_iam_role" "ecs_task_execution" {
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_policy" {
-  role       = aws_iam_role.ecs_task_execution.id
+  role       = aws_iam_role.ecs_task_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
@@ -42,9 +42,13 @@ resource "aws_ecs_task_definition" "gatus_task" {
       {
        "name": "gatus",
        "image": "940622738555.dkr.ecr.eu-west-2.amazonaws.com/gatus:latest",
-       "cpu": 1024,
-       "memory": 2048,
-       "essential": true
+       
+       "essential": true,
+        "portMappings" : [
+          {
+            "containerPort" : 8080
+          }
+        ]
       }
     ]
     TASK_DEFINITION
@@ -56,8 +60,8 @@ resource "aws_security_group" "ecs_sg" {
   vpc_id = var.vpc_id
 
   ingress{
-    from_port = 3000
-    to_port = 3000
+    from_port = 8080
+    to_port = 8080
     protocol = "tcp"
     security_groups = [ var.alb_sg ]
   }
@@ -79,13 +83,12 @@ resource "aws_ecs_service" "gatus_service" {
 
   load_balancer {
     target_group_arn = var.alb_tg_arn
-    container_name   = "80"
-    container_port   = 3000
+    container_name   = "gatus"
+    container_port   = 8080
   }
 
   network_configuration {
     subnets = var.priv_subnets
     security_groups = [aws_security_group.ecs_sg.id]
-    assign_public_ip = true
   }
 }
