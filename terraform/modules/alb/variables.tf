@@ -10,6 +10,6 @@ variable "pub_subnets" {
 
 variable "acm_arn" {
   type = string
-  
+
 }
 

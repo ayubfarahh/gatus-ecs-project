@@ -1,10 +1,17 @@
 resource "aws_ecs_cluster" "gatus_cluster" {
   name = "gatus-cluster"
-
   setting {
     name  = "containerInsights"
     value = "enabled"
   }
+
+
+}
+
+resource "aws_cloudwatch_log_group" "ecs_logs" {
+  name              = "ecs_logs"
+  retention_in_days = 7
+
 }
 
 resource "aws_iam_role" "ecs_task_execution" {
@@ -31,55 +38,61 @@ resource "aws_iam_role_policy_attachment" "ecs_policy" {
 
 
 resource "aws_ecs_task_definition" "gatus_task" {
-    family = "gatus-task-definition"
-    requires_compatibilities = [ "FARGATE" ]
-    network_mode = "awsvpc"
-    cpu = 1024
-    memory = 2048
-    execution_role_arn = aws_iam_role.ecs_task_execution.arn
-    container_definitions = <<TASK_DEFINITION
-    [
-      {
-       "name": "gatus",
-       "image": "940622738555.dkr.ecr.eu-west-2.amazonaws.com/gatus:latest",
-       
-       "essential": true,
-        "portMappings" : [
-          {
-            "containerPort" : 8080
-          }
-        ]
+  family                   = "gatus-task-definition"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 1024
+  memory                   = 2048
+  execution_role_arn       = aws_iam_role.ecs_task_execution.arn
+  container_definitions = jsonencode([
+    {
+      "name" : "gatus",
+      "image" : "940622738555.dkr.ecr.eu-west-2.amazonaws.com/gatus:latest",
+      "essential" : true,
+      "portMappings" : [
+        {
+          "containerPort" : 8080,
+          "hostPort" : 8080,
+          "protocol" : "tcp"
+        }
+      ],
+      "logConfiguration" : {
+        "logDriver" : "awslogs",
+        "options" : {
+          "awslogs-group" : "ecs_logs",
+          "awslogs-region" : "eu-west-2",
+          "awslogs-stream-prefix" : "ecs"
+        }
       }
-    ]
-    TASK_DEFINITION
-  
+    }
+  ])
 }
 
 resource "aws_security_group" "ecs_sg" {
-  name = "ecs_sg"
+  name   = "ecs_sg"
   vpc_id = var.vpc_id
 
-  ingress{
-    from_port = 8080
-    to_port = 8080
-    protocol = "tcp"
-    security_groups = [ var.alb_sg ]
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [var.alb_sg]
   }
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = -1
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
 }
 
 resource "aws_ecs_service" "gatus_service" {
   name            = "gatus_service"
   cluster         = aws_ecs_cluster.gatus_cluster.id
   task_definition = aws_ecs_task_definition.gatus_task.id
-  launch_type = "FARGATE"
+  launch_type     = "FARGATE"
   desired_count   = 1
 
   load_balancer {
@@ -89,7 +102,7 @@ resource "aws_ecs_service" "gatus_service" {
   }
 
   network_configuration {
-    subnets = var.priv_subnets
+    subnets         = var.priv_subnets
     security_groups = [aws_security_group.ecs_sg.id]
   }
 }

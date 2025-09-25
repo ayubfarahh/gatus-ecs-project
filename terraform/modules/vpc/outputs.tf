@@ -12,7 +12,7 @@ output "priv_subnets" {
     aws_subnet.priv_sub1.id,
     aws_subnet.priv_sub2.id
   ]
-  
+
 }
 
 output "vpc_id" {

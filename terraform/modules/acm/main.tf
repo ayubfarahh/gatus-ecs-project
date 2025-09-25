@@ -1,10 +1,10 @@
 resource "aws_acm_certificate" "cert" {
-    domain_name = "dev.coderco.ayubs.uk"
-    validation_method = "DNS"
-    
-    lifecycle {
-      create_before_destroy = true
-    }
+  domain_name       = "dev.coderco.ayubs.uk"
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_route53_record" "cert_validation" {
@@ -16,11 +16,11 @@ resource "aws_route53_record" "cert_validation" {
       type   = dvo.resource_record_type
     }
   }
-  zone_id = var.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
+  zone_id         = var.zone_id
+  name            = each.value.name
+  type            = each.value.type
+  ttl             = 60
+  records         = [each.value.record]
   allow_overwrite = true
 }
 
